@@ -13,19 +13,20 @@ class Persona_model extends CI_Model
         return R::findAll('persona');
     }
 
-    public function crearPersona($nombre, $pwd, $idPaisNace, $idPaisReside, $idsAficionGusta, $idsAficionOdia)
+    public function crearPersona($loginname, $nombre, $password, $idPaisNace, $idsAficionGusta, $idsAficionOdia, $idVentaEnCurso)
     {
-        $ok = ($nombre != null && $idPaisNace != null && $idPaisReside != null);
+        $ok = ($loginname != null && $idPaisNace != null && $idVentaEnCurso);
         if ($ok) {
             $persona = R::dispense('persona');
             
             $paisNacimiento = R::load('pais', $idPaisNace);
-            $paisResidencia = R::load('pais', $idPaisReside);
+            $ventaEnCurso = R::load('venta', $idVentaEnCurso);
             
+            $persona->loginname = $loginname;
             $persona->nombre = $nombre;
-            $persona->pwd = password_hash($pwd,PASSWORD_DEFAULT);
+            $persona->password = password_hash($password,PASSWORD_DEFAULT);
             $persona->nace = $paisNacimiento;
-            $persona->reside = $paisResidencia;
+            $persona->ventaencurso = $ventaEnCurso;
 
             R::store($persona);
 
@@ -44,7 +45,7 @@ class Persona_model extends CI_Model
                 R::store($odia);
             }
         } else {
-            $e = ($nombre == null ? new Exception("nulo") : new Exception("duplicado"));
+            $e = ($loginname == null ? new Exception("nulo") : new Exception("duplicado"));
             throw $e;
         }
     }
@@ -54,34 +55,58 @@ class Persona_model extends CI_Model
         R::trash($persona);
     }
 
-    public function registrarPersona($nombre, $pwd, $idPaisReside) {
-        $ok = ($nombre != null && $idPaisReside != null && 
-            R::findOne('persona','nombre=?',[$nombre])==null);
+    public function registrarPersona($loginname, $nombre, $password, $altura, $fnac, $foto, $idPaisNace) {
+        $ok = (loginname != null && R::findOne('persona','loginname=?',[loginname])==null);
 
         if ($ok) {
             $persona = R::dispense('persona');
             
-            $paisResidencia = R::load('pais', $idPaisReside);
+            $paisNace = R::load('pais', $idPaisNace);
             
+            $persona->loginname = $loginname;
             $persona->nombre = $nombre;
-            $persona->pwd = password_hash($pwd,PASSWORD_DEFAULT);
-            $persona->reside = $paisResidencia;
+            $persona->password = password_hash($password,PASSWORD_DEFAULT);
+            $persona->altura = $altura;
+            $persona->fnac = $fnac;
+            $persona->foto = $foto;
+            $persona->nace = $idPaisNace;
             
             R::store($persona);
             
         } else {
-            $e = (R::findOne('persona','nombre=?',[$nombre])!=null? new Exception("Duplicado") : new Exception("valores nulos"));
+            $e = (R::findOne('persona','loginname=?',[$loginname])!=null? new Exception("Duplicado") : new Exception("valores nulos"));
             throw $e;
         }
     }
-    public function actualizarPersona($id, $nombre, $idPaisNace, $idPaisReside, $idsAficionGusta, $idsAficionOdia)
+    
+    public function registrarAdmin($loginname, $nombre, $password) {
+        $ok = (loginname != null && $nombre != null &&
+            R::findOne('persona','loginname=?',[loginname])==null);
+        
+        if ($ok) {
+            $persona = R::dispense('persona');
+            
+            $persona->loginname = $loginname;
+            $persona->nombre = $nombre;
+            $persona->password = password_hash($password,PASSWORD_DEFAULT);
+            
+            R::store($persona);
+            
+        } else {
+            $e = (R::findOne('persona','loginname=?',[$loginname])!=null? new Exception("Duplicado") : new Exception("valores nulos"));
+            throw $e;
+        }
+    }
+    
+    public function actualizarPersona($id, $loginname, $nombre, $idPaisNace, $idsAficionGusta, $idsAficionOdia, $idVentaEnCurso)
     {
-        $ok = ($nombre != null && $idPaisNace != null && $idPaisReside != null);
+        $ok = ($loginname != null && $idPaisNace != null && $idVentaEnCurso);
         if ($ok) {
             $persona = R::load('persona', $id);
+            $persona->loginname = $loginname;
             $persona->nombre = $nombre;
             $persona->nace_id = $idPaisNace;
-            $persona->reside_id = $idPaisReside;
+            $persona->ventaencurso_id = $idVentaEnCurso;                  
 
             $comunes = [];
             foreach ($persona->ownGustaList as $gusta) {
@@ -102,17 +127,17 @@ class Persona_model extends CI_Model
                 R::store($gusta);
             }
         } else {
-            $e = ($nombre == null ? new Exception("nulo") : new Exception("duplicado"));
+            $e = ($loginname == null ? new Exception("nulo") : new Exception("duplicado"));
             throw $e;
         }
     }
 
-    public function verificarLogin($nombre,$pwd) {
-        $usuario = R::findOne('persona','nombre=?',[$nombre]);
+    public function verificarLogin($loginname,$password) {
+        $usuario = R::findOne('persona','loginname=?',[$loginname]);
         if ($usuario == null) {
             throw new Exception("Usuario o contraseña no correctas");
         }
-        if (!password_verify($pwd,$usuario->pwd)) {
+        if (!password_verify($password,$usuario->password)) {
             throw new Exception("Usuario o contraseña no correctas");
         }
         return $usuario;

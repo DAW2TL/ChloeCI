@@ -15,14 +15,40 @@ class Anonymous extends CI_Controller
     {
         $this->load->model('persona_model');
 
+        $loginname = isset($_POST['loginname']) ? $_POST['loginname'] : null;
         $nombre = isset($_POST['nombre']) ? $_POST['nombre'] : null;
         $pwd = isset($_POST['pwd']) ? $_POST['pwd'] : null;
-        $idPaisReside = isset($_POST['idPaisReside']) ? $_POST['idPaisReside'] : null;
+        $altura = isset($_POST['altura']) ? $_POST['altura'] : null;
+        $fnac = isset($_POST['fnac']) ? $_POST['fnac'] : null;
+        $foto = isset($_POST['foto']) ? $_POST['foto'] : null;
+        $idPaisNace = isset($_POST['idPaisNace']) ? $_POST['idPaisNace'] : null;
 
         try {
-            $this->persona_model->registrarPersona($nombre, $pwd, $idPaisReside);
+            $this->persona_model->registrarPersona($loginname, $nombre, $pwd, $altura, $fnac, $foto, $idPaisNace);
             session_start();
             $_SESSION['_msg']['texto'] = "Usuario registrado con éxito";
+            $_SESSION['_msg']['uri'] = '';
+            redirect(base_url() . 'msg');
+        } catch (Exception $e) {
+            session_start();
+            $_SESSION['_msg']['texto'] = $e->getMessage();
+            $_SESSION['_msg']['uri'] = 'persona/c';
+            redirect(base_url() . 'msg');
+        }
+    }
+    
+    public function registrarInit()
+    {
+        $this->load->model('persona_model');
+        
+        $loginname = "admin";
+        $nombre = "admin";
+        $pwd = "admin";
+        
+        try {
+            $this->persona_model->registrarAdmin($loginname, $nombre, $pwd);
+            session_start();
+            $_SESSION['_msg']['texto'] = "Administrador registrado con éxito";
             $_SESSION['_msg']['uri'] = '';
             redirect(base_url() . 'msg');
         } catch (Exception $e) {
@@ -56,6 +82,24 @@ class Anonymous extends CI_Controller
             $_SESSION['_msg']['uri'] = '';
             redirect(base_url() . 'msg');
         }
+    }
+    
+    public function init($id) {
+        $persona = R::load('persona');
+        R::trash($persona);
+        $pais = R::load('pais');
+        R::trash($pais);
+        $aficion = R::load('aficion');
+        R::trash($aficion);
+        $venta = R::load('venta');
+        R::trash($venta);
+        $lineadeventa = R::load('lineadeventa');
+        R::trash($lineadeventa);
+        $producto = R::load('producto');
+        R::trash($producto);
+        $categoria = R::load('categoria');
+        R::trash($categoria);
+        registrarInit();
     }
     
 }
