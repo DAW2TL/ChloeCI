@@ -1,0 +1,26 @@
+<?php
+function isRolOK($rol) {
+    $sol = false;
+    
+    if (session_status() == PHP_SESSION_NONE) {
+        session_start();
+    }
+    
+    $persona = isset($_SESSION['persona']) ? $_SESSION['persona'] : null;
+    
+    if ($persona != null && ($rol == 'auth' || $persona->loginname == 'admin' && $rol == 'admin')) {
+        $sol = true;
+    }
+    return $sol;
+}
+
+function PRG($mensaje='Ha ocurrido un error', $uri = '/', $severity = 'danger') {
+    if (session_status() == PHP_SESSION_NONE) {
+        session_start();
+    }
+    $_SESSION['_msg']['texto'] = $mensaje;
+    $_SESSION['_msg']['uri'] = $uri;
+    $_SESSION['_msg']['severity'] = $severity;
+    redirect(base_url() . 'info');
+}
+?>

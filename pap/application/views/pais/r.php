@@ -1,3 +1,4 @@
+<?php if (isRolOK('admin')):?>
 <div class="container">
 
 	<h1>Lista de países</h1>
@@ -8,13 +9,17 @@
 	<table class="table table-striped table-hover">
 		<tr>
 			<th>Nombre</th>
+			<th>Usuarios registrados</th>
 			<th>Acciones</th>
 		</tr>
 	
 	<?php foreach ($paises as $pais): ?>
 		<tr>
 			<td><?= $pais->nombre?></td>
+			<td><?= $pais->personas?></td>
 			<td>
+				<?php if ($pais->personas=0):?>
+				
 				<form action="<?=base_url()?>pais/dPost" method="post">
 					<input type="hidden" name="id" value="<?=$pais->id?>">
 					<button onclick="submit()">
@@ -22,6 +27,7 @@
 							width="20">
 					</button>
 				</form>
+				<?php endif;?>
 				<form action="<?=base_url()?>pais/u" method="get">
 					<input type="hidden" name="id" value="<?=$pais->id?>">
 					<button onclick="submit()">
@@ -34,3 +40,6 @@
 	<?php endforeach;?>
 </table>
 </div>
+<?php else:?>
+<?php redirect(base_url()); ?>
+<?php endif;?>

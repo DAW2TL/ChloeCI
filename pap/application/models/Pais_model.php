@@ -8,7 +8,12 @@ class Pais_model extends CI_Model
 
     public function getPaises()
     {
-        return R::findAll('pais');
+        return R::findAll('pais','order by nombre asc');
+    }
+    
+    public function getPaisById($id)
+    {
+        return R::load('pais', $id);
     }
 
     public function crearPais($nombre)

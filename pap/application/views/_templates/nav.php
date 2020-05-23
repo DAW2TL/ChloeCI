@@ -13,6 +13,7 @@
         </a>
         
 		<ul class="dropdown-menu">
+		  <li><a href="<?=base_url()?>hdu/anonymous/init">Init</a></li>
 		  <li><a href="<?=base_url()?>hdu/anonymous/registrar">Registrar</a></li>
 		  <li><a href="<?=base_url()?>hdu/anonymous/login">Login</a></li>
 		  <li><a href="<?=base_url()?>hdu/user/logout">Logout</a></li>
@@ -42,7 +43,9 @@
 		  <li><a href="<?=base_url()?>aficion/r">Listar</a></li>
 	     </ul>
       </li>
+      -->
 
+      <?php if (isRolOK('admin')):?>
       <li class="dropdown">
         <a class="dropdown-toggle" data-toggle="dropdown" href="#">
            País<span class="caret"></span>
@@ -53,8 +56,8 @@
 		  <li><a href="<?=base_url()?>pais/r">Listar</a></li>
 	     </ul>
       </li>
-
- -->
+      <?php else:?>
+      <?php endif;?>
 
 
     </ul>

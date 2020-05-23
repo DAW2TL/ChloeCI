@@ -2,8 +2,8 @@
 
 <h1>Registro de nuevo usuario</h1>
 
-<form action="<?=base_url()?>hdu/anonymous/registrarPost" method="post">
-	<label for="id-ln">loginname</label>
+<form action="<?=base_url()?>persona/cPost" method="post">
+	<label for="id-ln">Loginname</label>
 	<input id="id-ln" type="text" name="loginname" required="required"/>
 	<br/>
 	
@@ -16,11 +16,11 @@
 	<br/>
 	
 	<label for="id-alt">Altura</label>
-	<input id="id-alt" type="number" name="altura" step="1" min="0" max="400" required="required"/>
+	<input id="id-alt" type="number" name="altura" step="1" min="0" max="400" required="required" value="175"/>
 	<br/>
 	
 	<label for="id-fn">Fecha de Nacimiento</label>
-	<input id="id-fn" type="date" name="fnac" required="required"/>
+	<input id="id-fn" type="date" name="fnac" required="required" value="2000-02-29"/>
 	<br/>
 	
 	<label for="id-ft">Foto</label>

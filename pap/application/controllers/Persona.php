@@ -45,23 +45,47 @@ class Persona extends CI_Controller
         $this->load->model('pais_model');
         $this->load->model('aficion_model');
         $data['paises'] = $this->pais_model->getPaises();
-        $data['aficiones'] = $this->aficion_model->getAficiones();
         frame($this,'Persona/c',$data);
     }
 
-    public function cPost()
-    {
+    public function cPost() {
+        if (!isRolOK('admin')) {
+            PRG("rol incorrecto","/ruta/boton");
+        }
         $this->load->model('persona_model');
 
+        $loginname = isset($_POST['loginname']) ? $_POST['loginname'] : null;
         $nombre = isset($_POST['nombre']) ? $_POST['nombre'] : null;
         $pwd = isset($_POST['pwd']) ? $_POST['pwd'] : null;
-        $idPaisNace = isset($_POST['idPaisNace']) ? $_POST['idPaisNace'] : null;
-        $idPaisReside = isset($_POST['idPaisReside']) ? $_POST['idPaisReside'] : null;
-        $idsAficionGusta = isset($_POST['idsAficionGusta'])?$_POST['idsAficionGusta']:[];
-        $idsAficionOdia = isset($_POST['idsAficionOdia'])?$_POST['idsAficionOdia']:[];
+        $altura = isset($_POST['altura']) ? $_POST['altura'] : null;
+        $idFnac = isset($_POST['idFnac']) ? $_POST['idFnac'] : null;
+        $foto = isset($_POST['idFoto']) ? $_POST['idFoto'] : null;
+        $idPaisNace = isset($_POST['idPaisNace']) ? $_POST['idPaisNace'] : null; 
+//         $idPersona = isset($_POST['id']) ? $_POST['id'] : null; 
+        if ($idPaisNace=='----') {$idPaisNace=='NULL';}
+//         $idPaisReside = isset($_POST['idPaisReside']) ? $_POST['idPaisReside'] : null;
+//         $idsAficionGusta = isset($_POST['idsAficionGusta'])?$_POST['idsAficionGusta']:[];
+//         $idsAficionOdia = isset($_POST['idsAficionOdia'])?$_POST['idsAficionOdia']:[];
+        try {
+            $id = $this->persona_model->registrarPersona($loginname,$nombre,$pwd,$altura,$idFnac, $foto, $idPaisNace);
+            
+            if ($foto != null && $foto['tmp_name']!=null) {
+                $extension = explode('.', $foto['name'])[1];
+                $carpeta = "/assets/img/upload/";
+                if (!copy($foto['tmp_name'], $carpeta . "persona-$id." . $extension)) {
+                    throw new Exception('Error al copiar la foto '. $foto['name']. ' a '.$carpeta."persona-$id".$extension);
+                }
+            }
+            
+            PRG('Usuario creado correctamente.', 'login', 'success');
+        }   catch (Exception $e) {
+            PRG($e->getMessage(),  'persona/c');
+        }
+
+   
         
         try {
-            $this->persona_model->crearPersona($nombre,$pwd,$idPaisNace,$idPaisReside,$idsAficionGusta,$idsAficionOdia);
+            $this->persona_model->registrarPersona($loginname, $nombre, $pwd, $altura, $idFnac, $foto, $idPaisNace);
             redirect(base_url() . 'persona/r');
         }
         catch (Exception $e) {

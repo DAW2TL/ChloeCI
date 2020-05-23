@@ -36,28 +36,6 @@ class Anonymous extends CI_Controller
             redirect(base_url() . 'msg');
         }
     }
-    
-    public function registrarInit()
-    {
-        $this->load->model('persona_model');
-        
-        $loginname = "admin";
-        $nombre = "admin";
-        $pwd = "admin";
-        
-        try {
-            $this->persona_model->registrarAdmin($loginname, $nombre, $pwd);
-            session_start();
-            $_SESSION['_msg']['texto'] = "Administrador registrado con éxito";
-            $_SESSION['_msg']['uri'] = '';
-            redirect(base_url() . 'msg');
-        } catch (Exception $e) {
-            session_start();
-            $_SESSION['_msg']['texto'] = $e->getMessage();
-            $_SESSION['_msg']['uri'] = 'persona/c';
-            redirect(base_url() . 'msg');
-        }
-    }
 
     public function login()
     {
@@ -84,24 +62,68 @@ class Anonymous extends CI_Controller
         }
     }
     
-    public function init($id) {
-        $persona = R::load('persona');
-        R::trash($persona);
-        $pais = R::load('pais');
-        R::trash($pais);
-        $aficion = R::load('aficion');
-        R::trash($aficion);
-        $venta = R::load('venta');
-        R::trash($venta);
-        $lineadeventa = R::load('lineadeventa');
-        R::trash($lineadeventa);
-        $producto = R::load('producto');
-        R::trash($producto);
-        $categoria = R::load('categoria');
-        R::trash($categoria);
-        registrarInit();
+    public function registrarInit()
+    {
+        $this->load->model('persona_model');
+        
+        $loginname = "admin";
+        $nombre = "admin";
+        $pwd = "admin";
+        
+        try {
+            $this->persona_model->registrarAdmin($loginname, $nombre, $pwd);
+            session_start();
+            $_SESSION['_msg']['texto'] = "Administrador registrado con éxito";
+            $_SESSION['_msg']['uri'] = '';
+            redirect(base_url() . 'msg');
+        } catch (Exception $e) {
+            session_start();
+            $_SESSION['_msg']['texto'] = $e->getMessage();
+            $_SESSION['_msg']['uri'] = 'persona/c';
+            redirect(base_url() . 'msg');
+        }
     }
     
+    public function init() {
+        
+        if (isRolOK('admin')) {
+            R::nuke();
+            $data['msg'] = "BD Recreada";            
+            frame($this, '_hdu/anonymous/init', $data);
+            
+            $this->registrarInit();
+        }
+        else {
+            $data['msg'] = "No eres el usuario administrador";
+            frame($this, '_hdu/anonymous/login', $data);
+        }
+        
+
+        
+//         $idper=isset($_POST['idper'])?$_POST['idper']:null;
+//         $this->load->model('persona_model');
+//         $this->persona_model->borrarPersona($idper);      
+//         $idpai=isset($_POST['idpai'])?$_POST['idpai']:null;
+//         $pais = R::load('pais',$idpai);
+//         R::trash($pais);
+//         $idafi=isset($_POST['idafi'])?$_POST['idafi']:null;
+//         $aficion = R::load('aficion',$idafi);
+//         R::trash($aficion);
+//         $idven=isset($_POST['idven'])?$_POST['idven']:null;
+//         $venta = R::load('venta',$idven);
+//         R::trash($venta);
+//         $idldv=isset($_POST['idldv'])?$_POST['idldv']:null;
+//         $lineadeventa = R::load('lineadeventa',$idldv);
+//         R::trash($lineadeventa);
+//         $idpro=isset($_POST['idpro'])?$_POST['idpro']:null;
+//         $producto = R::load('producto',$idpro);
+//         R::trash($producto);
+//         $idcat=isset($_POST['idcat'])?$_POST['idcat']:null;
+//         $categoria = R::load('categoria',$idcat);
+//         R::trash($categoria);
+//    $this->registrarInit();
+//         redirect(base_url()."aceite/r"); 
+    } 
 }
 
 ?>
