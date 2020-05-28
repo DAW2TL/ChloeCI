@@ -31,5 +31,19 @@ class Pais_model extends CI_Model
            throw $e;
         }
     }
+    
+    public function actualizarPais($id, $nombre)
+    {
+        $ok = ($nombre!=null);
+        if ($ok) {
+            $pais = R::load('pais', $id);
+            $pais->nombre = $nombre;
+            
+            R::store($pais);
+        } else {
+            $e = ($nombre == null ? new Exception("nulo") : new Exception("duplicado"));
+            throw $e;
+        }
+    }
 }
 ?>

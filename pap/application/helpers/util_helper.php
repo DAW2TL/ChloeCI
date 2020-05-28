@@ -21,6 +21,6 @@ function PRG($mensaje='Ha ocurrido un error', $uri = '/', $severity = 'danger') 
     $_SESSION['_msg']['texto'] = $mensaje;
     $_SESSION['_msg']['uri'] = $uri;
     $_SESSION['_msg']['severity'] = $severity;
-    redirect(base_url() . 'info');
+    redirect(base_url() . 'persona/fallo');
 }
 ?>

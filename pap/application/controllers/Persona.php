@@ -50,7 +50,7 @@ class Persona extends CI_Controller
 
     public function cPost() {
         if (!isRolOK('admin')) {
-            PRG("rol incorrecto","/ruta/boton");
+            PRG("rol incorrecto",base_url());
         }
         $this->load->model('persona_model');
 

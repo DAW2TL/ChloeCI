@@ -32,7 +32,7 @@ class Anonymous extends CI_Controller
         } catch (Exception $e) {
             session_start();
             $_SESSION['_msg']['texto'] = $e->getMessage();
-            $_SESSION['_msg']['uri'] = 'persona/c';
+            $_SESSION['_msg']['uri'] = 'persona/fallo';
             redirect(base_url() . 'msg');
         }
     }
